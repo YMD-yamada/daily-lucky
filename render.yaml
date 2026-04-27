@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: daily-lucky
+    runtime: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: NOTIFY_CRON
+        value: 0 7 * * *
+      - key: NOTIFY_TIMEZONE
+        value: Asia/Tokyo
+      - key: NTFY_BASE_URL
+        value: https://ntfy.sh
+      - key: NTFY_TOPIC
+        sync: false

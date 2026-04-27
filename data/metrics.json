@@ -1,0 +1,49 @@
+{
+  "clicks": {
+    "マルマン ニーモシネ A5 ノート": 1,
+    "?????? ????? 390ml": 1
+  },
+  "clicksByProductId": {
+    "mug-nordic-390": 1
+  },
+  "clicksByKeyword": {
+    "mug": 1
+  },
+  "impressionsByProductId": {
+    "mug-nordic-390": 1
+  },
+  "impressionsByKeyword": {
+    "mug": 1
+  },
+  "dailyOptimization": {
+    "2026-04-24": {
+      "note": "note-n295",
+      "mug": "mug-nordic-390",
+      "pen": "pen-jetstream-41",
+      "tote": "tote-rth90029",
+      "watch": "watch-casio-lf30w",
+      "earphone": "earphone-qkz-ak6",
+      "handcream": "handcream-curel",
+      "bookcover": "bookcover-sion",
+      "bottle": "bottle-tiger-mmz",
+      "keyholder": "keyholder-lasiem",
+      "pouch": "pouch-elegante",
+      "towel": "towel-daily-10000281"
+    },
+    "2026-04-25": {
+      "note": "note-n295",
+      "mug": "mug-nordic-390",
+      "pen": "pen-jetstream-41",
+      "tote": "tote-rth90029",
+      "watch": "watch-casio-lf30w",
+      "earphone": "earphone-qkz-ak6",
+      "handcream": "handcream-curel",
+      "bookcover": "bookcover-sion",
+      "bottle": "bottle-tiger-mmz",
+      "keyholder": "keyholder-lasiem",
+      "pouch": "pouch-elegante",
+      "towel": "towel-daily-10000281"
+    }
+  },
+  "updatedAt": "2026-04-25T09:27:28.038Z"
+}
