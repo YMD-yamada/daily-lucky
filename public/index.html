@@ -22,6 +22,7 @@
       .badge{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
       .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:14px}
       .card{background:#0f1730;border:1px solid var(--line);border-radius:12px;padding:12px}
+      .card img.preview{width:100%;height:140px;object-fit:contain;background:#0b1230;border-radius:10px;border:1px solid #2a3967}
       .rank{font-weight:800;font-size:18px}
       .line{margin-top:6px;font-size:14px;color:var(--muted)}
       .line strong{color:var(--text)}
@@ -29,6 +30,10 @@
       a{color:#c9d7ff}
       .status{margin-top:8px;min-height:20px;color:var(--muted)}
       .footer{margin-top:8px;font-size:12px;color:var(--muted)}
+      .sources{margin-top:8px;padding-left:16px}
+      .sources li{margin-top:4px;font-size:12px}
+      .switch{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--text);padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#0f1730}
+      .switch input{width:22px;height:22px;accent-color:var(--primary)}
       @media (max-width:700px){.top{flex-direction:column;align-items:flex-start}}
     </style>
   </head>
@@ -39,7 +44,7 @@
           <h1>Daily Lucky</h1>
           <div class="muted">お気に入り優先・必要情報だけを表示</div>
         </div>
-        <label class="muted"><input id="showAll" type="checkbox" /> 全星座を表示</label>
+        <label class="switch"><input id="showAll" type="checkbox" /> 全星座表示</label>
       </div>
 
       <section class="panel">
@@ -95,11 +100,16 @@
 
       function cardHtml(row){
         return `<article class="card">
+          <img class="preview" src="${row.imageUrl || ""}" alt="${row.item}のイメージ" loading="lazy" />
           <div class="rank">#${row.rank} ${row.sign}</div>
           <div class="line"><span class="dot" style="background:${row.colorHex||"#fff"}"></span><strong>${row.color}</strong></div>
           <div class="line">アイテム: <strong>${row.item}</strong></div>
           <div class="line">候補: <strong>${row.name}</strong></div>
+          <div class="line">信頼度: <strong>${row.credibility?.score || "-"} / 100</strong>（${row.credibility?.note || ""}）</div>
           <div class="line"><a href="${row.productUrl}" data-product-id="${row.productId}" data-keyword-key="${row.keywordKey}" data-product-name="${row.name}" target="_blank" rel="noopener noreferrer">商品ページを開く</a></div>
+          <ul class="sources">
+            ${(row.credibility?.references || []).map((r) => `<li><a href="${r.searchUrl}" target="_blank" rel="noopener noreferrer">${r.name}の検索結果</a></li>`).join("")}
+          </ul>
         </article>`;
       }
 
@@ -130,7 +140,7 @@
           const list = Array.isArray(json.data) ? json.data : [];
           sourceBadge.textContent = `参照元: ${(json.sourcesUsed || []).join(", ") || "-"}`;
           cards.innerHTML = list.map(cardHtml).join("");
-          footer.textContent = `${list.length}件表示 / お気に入り: ${favorite}`;
+          footer.textContent = `${list.length}件表示 / お気に入り: ${favorite} / アフィリエイト: ${json.affiliateEnabled ? "有効" : "未設定"}`;
           setStatus("最新データに更新しました。");
           document.querySelectorAll("a[data-product-id]").forEach((a) => {
             fetch("/api/impression", {

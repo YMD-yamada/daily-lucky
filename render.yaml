@@ -2,7 +2,7 @@ services:
   - type: web
     name: daily-lucky
     runtime: docker
-    plan: starter
+    plan: free
     autoDeploy: true
     healthCheckPath: /api/health
     envVars:
@@ -15,4 +15,14 @@ services:
       - key: NTFY_BASE_URL
         value: https://ntfy.sh
       - key: NTFY_TOPIC
+        sync: false
+      - key: ENABLE_PUBLIC_TUNNEL
+        value: false
+      - key: PUBLIC_TUNNEL_PROVIDER
+        value: cloudflared
+      - key: RAKUTEN_AFF_QUERY
+        sync: false
+      - key: RAKUTEN_AFF_WRAPPER_BASE
+        sync: false
+      - key: AMAZON_ASSOCIATE_TAG
         sync: false

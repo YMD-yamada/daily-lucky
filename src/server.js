@@ -11,6 +11,7 @@ const { getDailyHoroscope, SIGNS } = require("./services/horoscope");
 const { buildProductLink } = require("./services/amazon");
 const { sendNtfyMessage, getNotifyTargetInfo } = require("./services/notify");
 const { resolveColor } = require("./services/color");
+const { buildCredibility, TRUSTED_SITES } = require("./services/sources");
 const { readMetrics, trackClick, trackImpression, updateDailyOptimization, readDailyOptimization } = require("./services/metrics");
 const { buildDailyOptimizationMap } = require("./services/optimizer");
 
@@ -35,6 +36,11 @@ const cloudflaredPath =
   "C:\\Users\\cz7\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Cloudflare.cloudflared_Microsoft.Winget.Source_8wekyb3d8bbwe\\cloudflared.exe";
 let publicTunnelUrl = "";
 let tunnelProcess = null;
+const affiliateEnabled = Boolean(
+  (process.env.RAKUTEN_AFF_QUERY || "").trim() ||
+    (process.env.RAKUTEN_AFF_WRAPPER_BASE || "").trim() ||
+    (process.env.AMAZON_ASSOCIATE_TAG || "").trim()
+);
 
 app.disable("x-powered-by");
 app.use(express.json());
@@ -56,11 +62,14 @@ app.use(express.static("public"));
 function enrichEntry(entry, options = {}) {
   const link = buildProductLink(entry.item, options);
   const color = resolveColor(entry.color);
+  const dateText = new Date().toLocaleDateString("ja-JP");
+  const credibility = buildCredibility(entry.sign, dateText);
   return {
     ...entry,
     color: color.colorName,
     colorHex: color.colorHex,
     ...link,
+    credibility,
   };
 }
 
@@ -77,6 +86,7 @@ app.get("/api/today", async (req, res) => {
       count: list.length,
       source: list[0]?.source || "unknown",
       sourcesUsed,
+      affiliateEnabled,
       data: list.map((entry) =>
         enrichEntry(entry, {
           dateKey,
@@ -144,6 +154,10 @@ cron.schedule(
 
 app.get("/api/signs", (req, res) => {
   res.json(SIGNS);
+});
+
+app.get("/api/trusted-sources", (req, res) => {
+  res.json(TRUSTED_SITES);
 });
 
 app.get("/api/health", async (req, res) => {

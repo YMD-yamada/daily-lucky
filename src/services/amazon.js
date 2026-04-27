@@ -100,6 +100,21 @@ const PRODUCT_BUCKETS = [
 const { applyAffiliateToItemUrl } = require("./monetization");
 
 const FALLBACK = PRODUCT_BUCKETS[0].candidates[0];
+const IMAGE_BY_BUCKET = {
+  note: "https://openmoji.org/data/color/svg/1F4D3.svg",
+  mug: "https://openmoji.org/data/color/svg/2615.svg",
+  pen: "https://openmoji.org/data/color/svg/1F58A.svg",
+  tote: "https://openmoji.org/data/color/svg/1F45C.svg",
+  watch: "https://openmoji.org/data/color/svg/231A.svg",
+  earphone: "https://openmoji.org/data/color/svg/1F3A7.svg",
+  handcream: "https://openmoji.org/data/color/svg/1F9F4.svg",
+  bookcover: "https://openmoji.org/data/color/svg/1F4D5.svg",
+  bottle: "https://openmoji.org/data/color/svg/1F9C3.svg",
+  keyholder: "https://openmoji.org/data/color/svg/1F511.svg",
+  pouch: "https://openmoji.org/data/color/svg/1F45D.svg",
+  towel: "https://openmoji.org/data/color/svg/1F9FA.svg",
+  fallback: "https://openmoji.org/data/color/svg/1F31F.svg",
+};
 
 function pickBucket(itemName = "") {
   const normalized = itemName.trim();
@@ -142,6 +157,7 @@ function buildProductLink(itemName = "", options = {}) {
       name: FALLBACK.name,
       reason: "該当商品がないため定番商品を表示",
       productUrl: applyAffiliateToItemUrl(FALLBACK.url),
+      imageUrl: IMAGE_BY_BUCKET.fallback,
     };
   }
 
@@ -155,6 +171,7 @@ function buildProductLink(itemName = "", options = {}) {
     name: picked.name,
     reason: forced ? `${picked.reason}（実績最適化で選出）` : picked.reason,
     productUrl: applyAffiliateToItemUrl(picked.url),
+    imageUrl: IMAGE_BY_BUCKET[bucket.key] || IMAGE_BY_BUCKET.fallback,
   };
 }
 

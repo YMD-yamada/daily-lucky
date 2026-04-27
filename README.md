@@ -2,6 +2,21 @@
 
 占いAPIから「ラッキー色」「ラッキーアイテム」を取得し、購入用リンクを表示し、毎朝自動通知するアプリです。
 
+## 正式公開（固定URL / 無料）
+
+`trycloudflare` は試作用なのでURLが変わります。正式運用は Render の固定URL（`*.onrender.com`）を使います。
+
+1. GitHubに `master`（または `main`）をpush済みであることを確認
+2. Renderで New + -> Blueprint か Web Service を作成し、リポジトリを連携
+3. `render.yaml` を読み込んでデプロイ（`plan: free`）
+4. 環境変数を設定
+   - `NTFY_TOPIC`（匿名トピック）
+   - `NOTIFY_TIMEZONE=Asia/Tokyo`
+   - `NOTIFY_CRON=0 7 * * *`
+   - `ENABLE_PUBLIC_TUNNEL=false`（Renderでは不要）
+   - アフィ導入前は `RAKUTEN_AFF_QUERY` などは空のまま
+5. デプロイ完了後、`https://<service>.onrender.com/api/health` で疎通確認
+
 ## まず使ってもらう（継続の前提）
 
 1. 共有用URL（`GET /api/public-url` または本番ドメイン）をSNS・友だちに渡す
