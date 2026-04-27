@@ -37,6 +37,21 @@
 
 - 各プログラムの利用規約・正しいリンクの作り方は、**必ず公式の発行画面に従ってください**（このリポジトリは「差し込み口」だけ提供します）。
 
+### このアプリの現仕様
+
+- `PREFERRED_STORE=amazon` のとき、商品リンクは Amazon 検索URL（`AMAZON_ASSOCIATE_TAG` 付き）を優先表示
+- `PREFERRED_STORE=rakuten` のとき、楽天商品ページ（`RAKUTEN_AFF_QUERY`/`RAKUTEN_AFF_WRAPPER_BASE` 付き）を優先表示
+- UIでは楽天/Amazon両方の代替リンクを表示
+
+### 楽天アフィリエイト情報の取り方（この仕様向け）
+
+1. 楽天アフィリエイト管理画面で任意の商品1つのリンクを作成
+2. 発行URLから次のどちらかを取得
+   - `scid=...` が含まれる場合: `RAKUTEN_AFF_QUERY=scid=...`
+   - 中継URL形式の場合: `RAKUTEN_AFF_WRAPPER_BASE=<中継URLの先頭>`
+3. `.env.local` か Render の環境変数に設定
+4. 再起動後に `/api/affiliate-config` で `rakutenAffiliateEnabled: true` を確認
+
 ### 再検討のおすすめ順
 
 1. 無料で価値を出す（占い+通知+お気に入り）

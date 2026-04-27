@@ -27,6 +27,7 @@ const notifyCron = process.env.NOTIFY_CRON || "0 7 * * *";
 const timezone = process.env.NOTIFY_TIMEZONE || "Asia/Tokyo";
 const defaultSign = process.env.DEFAULT_SIGN || "";
 const appVersion = process.env.npm_package_version || "0.0.0";
+const preferredStore = (process.env.PREFERRED_STORE || "rakuten").toLowerCase();
 const enablePublicTunnel = process.env.ENABLE_PUBLIC_TUNNEL === "true";
 const publicTunnelProvider = process.env.PUBLIC_TUNNEL_PROVIDER || "cloudflared";
 const publicSubdomain = process.env.PUBLIC_SUBDOMAIN || "";
@@ -169,6 +170,7 @@ app.get("/api/health", async (req, res) => {
       cronEnabled: Boolean(process.env.NTFY_TOPIC),
       notifyCron,
       timezone,
+      preferredStore,
       dataSource: list[0]?.source || "unknown",
       notifyTarget: getNotifyTargetInfo(),
     });
@@ -179,6 +181,19 @@ app.get("/api/health", async (req, res) => {
       error: error.message,
     });
   }
+});
+
+app.get("/api/affiliate-config", (req, res) => {
+  const amazonTag = (process.env.AMAZON_ASSOCIATE_TAG || "").trim();
+  const rakutenQuery = (process.env.RAKUTEN_AFF_QUERY || "").trim();
+  const rakutenWrapper = (process.env.RAKUTEN_AFF_WRAPPER_BASE || "").trim();
+  res.json({
+    preferredStore,
+    amazonAssociateEnabled: Boolean(amazonTag),
+    amazonTagMasked: amazonTag ? `${amazonTag.slice(0, 3)}***` : "",
+    rakutenAffiliateEnabled: Boolean(rakutenQuery || rakutenWrapper),
+    rakutenMode: rakutenWrapper ? "wrapper" : rakutenQuery ? "query" : "none",
+  });
 });
 
 app.get("/api/notify-target", (req, res) => {

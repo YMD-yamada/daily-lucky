@@ -97,7 +97,7 @@ const PRODUCT_BUCKETS = [
   },
 ];
 
-const { applyAffiliateToItemUrl } = require("./monetization");
+const { applyAffiliateToItemUrl, appendAmazonTag } = require("./monetization");
 
 const FALLBACK = PRODUCT_BUCKETS[0].candidates[0];
 const IMAGE_BY_BUCKET = {
@@ -149,14 +149,27 @@ function buildProductLink(itemName = "", options = {}) {
   const preferredProductId = options.preferredProductId || "";
   const metrics = options.metrics || null;
 
+  const preferredStore = (process.env.PREFERRED_STORE || "rakuten").toLowerCase();
+
   if (!bucket) {
+    const amazonFallback = appendAmazonTag(
+      `https://www.amazon.co.jp/s?k=${encodeURIComponent(itemName || FALLBACK.name)}`
+    );
     return {
       keywordKey: "fallback",
       productId: FALLBACK.id,
-      provider: FALLBACK.provider,
+      provider: preferredStore === "amazon" ? "Amazon" : FALLBACK.provider,
       name: FALLBACK.name,
       reason: "該当商品がないため定番商品を表示",
-      productUrl: applyAffiliateToItemUrl(FALLBACK.url),
+      productUrl:
+        preferredStore === "amazon"
+          ? amazonFallback
+          : applyAffiliateToItemUrl(FALLBACK.url),
+      storeMode: preferredStore,
+      altLinks: {
+        rakuten: applyAffiliateToItemUrl(FALLBACK.url),
+        amazon: amazonFallback,
+      },
       imageUrl: IMAGE_BY_BUCKET.fallback,
     };
   }
@@ -164,13 +177,31 @@ function buildProductLink(itemName = "", options = {}) {
   const forced = bucket.candidates.find((c) => c.id === preferredProductId);
   const picked = forced || chooseByClicks(bucket.candidates, metrics, dateKey);
 
+  const amazonSearch = appendAmazonTag(
+    `https://www.amazon.co.jp/s?k=${encodeURIComponent(itemName || picked.name)}`
+  );
+  const rakutenItem = applyAffiliateToItemUrl(picked.url);
+  const primaryUrl = preferredStore === "amazon" ? amazonSearch : rakutenItem;
+  const provider = preferredStore === "amazon" ? "Amazon" : picked.provider;
+  const reason =
+    preferredStore === "amazon"
+      ? "Amazon検索結果（アソシエイトタグ適用）"
+      : forced
+        ? `${picked.reason}（実績最適化で選出）`
+        : picked.reason;
+
   return {
     keywordKey: bucket.key,
     productId: picked.id,
-    provider: picked.provider,
+    provider,
     name: picked.name,
-    reason: forced ? `${picked.reason}（実績最適化で選出）` : picked.reason,
-    productUrl: applyAffiliateToItemUrl(picked.url),
+    reason,
+    productUrl: primaryUrl,
+    storeMode: preferredStore,
+    altLinks: {
+      rakuten: rakutenItem,
+      amazon: amazonSearch,
+    },
     imageUrl: IMAGE_BY_BUCKET[bucket.key] || IMAGE_BY_BUCKET.fallback,
   };
 }

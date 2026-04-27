@@ -58,6 +58,7 @@
         <div class="meta">
           <span id="sourceBadge" class="badge">参照元: -</span>
           <span id="notifyBadge" class="badge">通知先: 確認中</span>
+          <span id="storeBadge" class="badge">ストア: 確認中</span>
         </div>
         <div id="status" class="status"></div>
       </section>
@@ -74,6 +75,7 @@
       const cards = document.getElementById("cards");
       const sourceBadge = document.getElementById("sourceBadge");
       const notifyBadge = document.getElementById("notifyBadge");
+      const storeBadge = document.getElementById("storeBadge");
       const statusEl = document.getElementById("status");
       const footer = document.getElementById("footer");
 
@@ -105,8 +107,10 @@
           <div class="line"><span class="dot" style="background:${row.colorHex||"#fff"}"></span><strong>${row.color}</strong></div>
           <div class="line">アイテム: <strong>${row.item}</strong></div>
           <div class="line">候補: <strong>${row.name}</strong></div>
+          <div class="line">ストア: <strong>${row.provider}</strong></div>
           <div class="line">信頼度: <strong>${row.credibility?.score || "-"} / 100</strong>（${row.credibility?.note || ""}）</div>
           <div class="line"><a href="${row.productUrl}" data-product-id="${row.productId}" data-keyword-key="${row.keywordKey}" data-product-name="${row.name}" target="_blank" rel="noopener noreferrer">商品ページを開く</a></div>
+          <div class="line"><a href="${row.altLinks?.rakuten || "#"}" target="_blank" rel="noopener noreferrer">楽天</a> / <a href="${row.altLinks?.amazon || "#"}" target="_blank" rel="noopener noreferrer">Amazon</a></div>
           <ul class="sources">
             ${(row.credibility?.references || []).map((r) => `<li><a href="${r.searchUrl}" target="_blank" rel="noopener noreferrer">${r.name}の検索結果</a></li>`).join("")}
           </ul>
@@ -140,7 +144,9 @@
           const list = Array.isArray(json.data) ? json.data : [];
           sourceBadge.textContent = `参照元: ${(json.sourcesUsed || []).join(", ") || "-"}`;
           cards.innerHTML = list.map(cardHtml).join("");
-          footer.textContent = `${list.length}件表示 / お気に入り: ${favorite} / アフィリエイト: ${json.affiliateEnabled ? "有効" : "未設定"}`;
+          const cfg = await (await fetch("/api/affiliate-config")).json();
+          storeBadge.textContent = `ストア: ${cfg.preferredStore}`;
+          footer.textContent = `${list.length}件表示 / お気に入り: ${favorite} / Amazonタグ: ${cfg.amazonAssociateEnabled ? "設定済み" : "未設定"} / 楽天アフィ: ${cfg.rakutenAffiliateEnabled ? "設定済み" : "未設定"}`;
           setStatus("最新データに更新しました。");
           document.querySelectorAll("a[data-product-id]").forEach((a) => {
             fetch("/api/impression", {
