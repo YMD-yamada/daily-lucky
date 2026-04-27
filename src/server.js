@@ -1,3 +1,5 @@
+const fs = require("node:fs");
+const path = require("node:path");
 const express = require("express");
 const cron = require("node-cron");
 const dotenv = require("dotenv");
@@ -13,6 +15,10 @@ const { readMetrics, trackClick, trackImpression, updateDailyOptimization, readD
 const { buildDailyOptimizationMap } = require("./services/optimizer");
 
 dotenv.config();
+const localEnvPath = path.join(process.cwd(), ".env.local");
+if (fs.existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath, override: true });
+}
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
