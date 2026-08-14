@@ -5,36 +5,296 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Daily Lucky</title>
     <style>
-      :root { --bg:#0b1022; --surface:#121a35; --line:#28345f; --text:#eef2ff; --muted:#9fb0db; --primary:#5f7dff; --ok:#3ddc97; --danger:#ff7b7b; }
-      *{box-sizing:border-box}
-      body{margin:0;font-family:"Segoe UI",Meiryo,sans-serif;background:linear-gradient(180deg,#0b1022,#070b18);color:var(--text)}
-      .wrap{max-width:980px;margin:0 auto;padding:20px}
-      .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
-      h1{margin:0;font-size:24px}
-      .muted{color:var(--muted);font-size:13px}
-      .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
-      .row{display:flex;gap:8px;flex-wrap:wrap}
-      select,input,button{height:40px;border-radius:10px;border:1px solid var(--line);background:#0f1730;color:var(--text);padding:0 12px}
-      button{cursor:pointer;font-weight:600}
-      .primary{background:var(--primary);border-color:transparent}
-      .ghost{background:#172245}
-      .meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px}
-      .badge{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-      .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:14px}
-      .card{background:#0f1730;border:1px solid var(--line);border-radius:12px;padding:12px}
-      .card img.preview{width:100%;height:140px;object-fit:contain;background:#0b1230;border-radius:10px;border:1px solid #2a3967}
-      .rank{font-weight:800;font-size:18px}
-      .line{margin-top:6px;font-size:14px;color:var(--muted)}
-      .line strong{color:var(--text)}
-      .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:6px;border:1px solid #fff8}
-      a{color:#c9d7ff}
-      .status{margin-top:8px;min-height:20px;color:var(--muted)}
-      .footer{margin-top:8px;font-size:12px;color:var(--muted)}
-      .sources{margin-top:8px;padding-left:16px}
-      .sources li{margin-top:4px;font-size:12px}
-      .switch{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--text);padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#0f1730}
-      .switch input{width:22px;height:22px;accent-color:var(--primary)}
-      @media (max-width:700px){.top{flex-direction:column;align-items:flex-start}}
+      :root {
+        --bg: #0b1022;
+        --surface: #121a35;
+        --line: #28345f;
+        --text: #eef2ff;
+        --muted: #9fb0db;
+        --primary: #5f7dff;
+        --ok: #3ddc97;
+        --danger: #ff7b7b;
+        --fortune-accent: #7c8cff;
+        --shop-accent: #ffb020;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Meiryo, sans-serif;
+        background: linear-gradient(180deg, #0b1022, #070b18);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0 0 10px;
+        line-height: 1.5;
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+      }
+      .settings-toggle {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #0f1730;
+        color: var(--text);
+        padding: 12px 14px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .settings-toggle:focus {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+      .settings-body {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+      }
+      .setting-step {
+        padding: 12px 0;
+        border-bottom: 1px dashed #2c3a6f;
+      }
+      .setting-step:last-child {
+        border-bottom: 0;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      select,
+      input,
+      button {
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #0f1730;
+        color: var(--text);
+        padding: 0 12px;
+      }
+      button {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary {
+        background: var(--primary);
+        border-color: transparent;
+      }
+      .ghost {
+        background: #172245;
+      }
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .badge {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .card {
+        background: #0f1730;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+      }
+      .chip {
+        display: inline-block;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+      }
+      .chip-fortune {
+        background: rgba(124, 140, 255, 0.14);
+        color: #dbe4ff;
+        border: 1px solid rgba(124, 140, 255, 0.45);
+      }
+      .chip-shop {
+        background: rgba(255, 176, 32, 0.12);
+        color: #ffe6a8;
+        border: 1px solid rgba(255, 176, 32, 0.45);
+      }
+      .block {
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .fortune-block {
+        border: 1px solid rgba(124, 140, 255, 0.35);
+        background: linear-gradient(145deg, rgba(95, 125, 255, 0.14), rgba(11, 16, 48, 0));
+      }
+      .shop-block {
+        margin-top: 12px;
+        border: 1px solid rgba(255, 176, 32, 0.35);
+        background: linear-gradient(145deg, rgba(255, 176, 32, 0.12), rgba(11, 16, 48, 0));
+      }
+      .rank {
+        font-weight: 900;
+        font-size: 18px;
+      }
+      .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-right: 6px;
+        border: 1px solid #fff8;
+      }
+      .content-snippet {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #2a3967;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.55;
+        white-space: pre-wrap;
+      }
+      .line {
+        margin-top: 6px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .line strong {
+        color: var(--text);
+      }
+      .shop-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .preview {
+        width: 100%;
+        max-width: 220px;
+        height: 140px;
+        margin-left: auto;
+        object-fit: contain;
+        background: #0b1230;
+        border-radius: 10px;
+        border: 1px solid #2a3967;
+      }
+      .sources {
+        margin-top: 10px;
+        padding-left: 18px;
+      }
+      .sources li {
+        margin-top: 6px;
+        font-size: 12px;
+      }
+      a {
+        color: #c9d7ff;
+      }
+      .status {
+        margin-top: 8px;
+        min-height: 20px;
+        color: var(--muted);
+      }
+      .footer {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .legal {
+        margin-top: 16px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .legal a {
+        color: inherit;
+      }
+      .switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--text);
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #0f1730;
+      }
+      .switch input {
+        width: 22px;
+        height: 22px;
+        accent-color: var(--primary);
+      }
+      .line-box {
+        border-radius: 12px;
+        border: 1px solid #2c3a6f;
+        padding: 12px;
+        background: #0b1230;
+      }
+      .line-box code {
+        display: block;
+        margin-top: 8px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #0a0f24;
+        color: #dbe4ff;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+      @media (max-width: 700px) {
+        .top {
+          flex-direction: column;
+        }
+      }
     </style>
   </head>
   <body>
@@ -42,29 +302,73 @@
       <div class="top">
         <div>
           <h1>Daily Lucky</h1>
-          <div class="muted">お気に入り優先・必要情報だけを表示</div>
+          <div class="muted">占いは「鑑定」、下の枠は「お買い物の候補」として分けて表示します</div>
         </div>
-        <label class="switch"><input id="showAll" type="checkbox" /> 全星座表示</label>
       </div>
 
-      <section class="panel">
-        <div class="row">
-          <select id="signSelect" aria-label="星座"></select>
-          <input id="birthdayInput" type="date" />
-          <button id="saveProfileBtn" class="ghost">お気に入り保存</button>
-          <button id="refreshBtn" class="primary">更新</button>
-          <button id="notifyBtn" class="ghost">通知テスト</button>
+      <section class="panel" aria-label="クイック操作">
+        <div class="actions">
+          <button id="refreshBtn" class="primary">今日の結果を更新</button>
+          <button id="notifyBtn" class="ghost">ntfy通知テスト</button>
         </div>
         <div class="meta">
           <span id="sourceBadge" class="badge">参照元: -</span>
-          <span id="notifyBadge" class="badge">通知先: 確認中</span>
-          <span id="storeBadge" class="badge">ストア: 確認中</span>
+          <span id="notifyBadge" class="badge">ntfy: 確認中</span>
+          <span id="storeBadge" class="badge">優先ストア: -</span>
+          <span id="lineBadge" class="badge">LINE: 確認中</span>
         </div>
-        <div id="status" class="status"></div>
+        <div id="status" class="status" role="status"></div>
+      </section>
+
+      <section class="panel" style="margin-top: 14px" aria-label="設定">
+        <button type="button" id="settingsToggle" class="settings-toggle" aria-expanded="false">
+          <span>設定（星座・表示・通知）</span>
+          <span aria-hidden="true">▼</span>
+        </button>
+        <div id="settingsBody" class="settings-body" hidden>
+          <div class="setting-step">
+            <h2>1. 占いプロフィール</h2>
+            <p class="hint">誕生日を入れると星座が自動選択されます。表示したい星座を選んで「保存」してください。</p>
+            <div class="actions">
+              <select id="signSelect" aria-label="星座"></select>
+              <input id="birthdayInput" type="date" aria-label="誕生日" />
+              <button id="saveProfileBtn" class="ghost">保存</button>
+            </div>
+          </div>
+
+          <div class="setting-step">
+            <h2>2. 表示モード</h2>
+            <p class="hint">オフのときは、保存したお気に入り星座だけを大きく表示します。</p>
+            <label class="switch"><input id="showAll" type="checkbox" /> 12星座すべて表示する</label>
+          </div>
+
+          <div class="setting-step">
+            <h2>3. スマホ通知（ntfy）</h2>
+            <p class="hint">匿名トピックで受け取れます。通知先のマスク表示は上部バッジを確認してください。</p>
+          </div>
+
+          <div class="setting-step">
+            <h2>4. LINE公式アカウント（任意）</h2>
+            <p class="hint">
+              サーバーにトークンを設定すると有効化されます。友だち追加後、トーク内で星座と通知時刻を送ると、毎日その時刻に占い＋商品リンクが届きます。
+            </p>
+            <div id="lineHelp" class="line-box muted">読み込み中...</div>
+            <code
+              >例: 「蟹座」→「07:30」 / いま見るなら「今日」 / 止める「停止」 / 戻す「再開」 / 一覧「ヘルプ」</code
+            >
+          </div>
+        </div>
       </section>
 
       <section id="cards" class="cards" aria-live="polite"></section>
       <div id="footer" class="footer"></div>
+      <p class="legal">
+        <a href="https://ymd-portfolio-site.pages.dev/legal/privacy" rel="noopener">プライバシー</a>
+        ·
+        <a href="https://ymd-portfolio-site.pages.dev/legal/terms" rel="noopener">利用規約</a>
+        ·
+        <a href="https://ymd-portfolio-site.pages.dev/legal/support" rel="noopener">サポート</a>
+      </p>
     </main>
 
     <script>
@@ -76,12 +380,18 @@
       const sourceBadge = document.getElementById("sourceBadge");
       const notifyBadge = document.getElementById("notifyBadge");
       const storeBadge = document.getElementById("storeBadge");
+      const lineBadge = document.getElementById("lineBadge");
       const statusEl = document.getElementById("status");
       const footer = document.getElementById("footer");
+      const settingsToggle = document.getElementById("settingsToggle");
+      const settingsBody = document.getElementById("settingsBody");
+      const lineHelp = document.getElementById("lineHelp");
 
       function getSignFromBirthday(dateStr) {
         if (!dateStr) return "";
-        const d = new Date(dateStr), m = d.getMonth() + 1, day = d.getDate();
+        const d = new Date(dateStr),
+          m = d.getMonth() + 1,
+          day = d.getDate();
         if ((m === 3 && day >= 21) || (m === 4 && day <= 19)) return "牡羊座";
         if ((m === 4 && day >= 20) || (m === 5 && day <= 20)) return "牡牛座";
         if ((m === 5 && day >= 21) || (m === 6 && day <= 21)) return "双子座";
@@ -96,39 +406,123 @@
         return "魚座";
       }
 
-      function loadProfile(){ try{return JSON.parse(localStorage.getItem(profileKey)||"{}")}catch{return{}}}
-      function saveProfile(p){ localStorage.setItem(profileKey, JSON.stringify(p)); }
-      function setStatus(msg, error=false){ statusEl.textContent = msg; statusEl.style.color = error ? "var(--danger)" : "var(--muted)"; }
+      function loadProfile() {
+        try {
+          return JSON.parse(localStorage.getItem(profileKey) || "{}");
+        } catch {
+          return {};
+        }
+      }
+      function saveProfile(p) {
+        localStorage.setItem(profileKey, JSON.stringify(p));
+      }
+      function setStatus(msg, error = false) {
+        statusEl.textContent = msg;
+        statusEl.style.color = error ? "var(--danger)" : "var(--muted)";
+      }
 
-      function cardHtml(row){
+      function escapeHtml(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function cardHtml(row) {
+        const snippet = row.content ? escapeHtml(String(row.content).slice(0, 420)) : "（コメントなし）";
+        const refs = (row.credibility?.references || [])
+          .map(
+            (r) =>
+              `<li><a href="${r.searchUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+                r.name
+              )}の検索結果</a></li>`
+          )
+          .join("");
         return `<article class="card">
-          <img class="preview" src="${row.imageUrl || ""}" alt="${row.item}のイメージ" loading="lazy" />
-          <div class="rank">#${row.rank} ${row.sign}</div>
-          <div class="line"><span class="dot" style="background:${row.colorHex||"#fff"}"></span><strong>${row.color}</strong></div>
-          <div class="line">アイテム: <strong>${row.item}</strong></div>
-          <div class="line">候補: <strong>${row.name}</strong></div>
-          <div class="line">ストア: <strong>${row.provider}</strong></div>
-          <div class="line">信頼度: <strong>${row.credibility?.score || "-"} / 100</strong>（${row.credibility?.note || ""}）</div>
-          <div class="line"><a href="${row.productUrl}" data-product-id="${row.productId}" data-keyword-key="${row.keywordKey}" data-product-name="${row.name}" target="_blank" rel="noopener noreferrer">商品ページを開く</a></div>
-          <div class="line"><a href="${row.altLinks?.rakuten || "#"}" target="_blank" rel="noopener noreferrer">楽天</a> / <a href="${row.altLinks?.amazon || "#"}" target="_blank" rel="noopener noreferrer">Amazon</a></div>
-          <ul class="sources">
-            ${(row.credibility?.references || []).map((r) => `<li><a href="${r.searchUrl}" target="_blank" rel="noopener noreferrer">${r.name}の検索結果</a></li>`).join("")}
-          </ul>
+          <div class="chip chip-fortune">占い・ラッキー要素</div>
+          <div class="block fortune-block">
+            <div class="rank">#${row.rank} ${escapeHtml(row.sign)}</div>
+            <div class="line"><span class="dot" style="background:${row.colorHex || "#fff"}"></span><strong>${escapeHtml(
+          row.color
+        )}</strong>（ラッキーカラー）</div>
+            <div class="line">ラッキーアイテム: <strong>${escapeHtml(row.item)}</strong></div>
+            <div class="line">信頼度スコア: <strong>${row.credibility?.score || "-"} / 100</strong>（${escapeHtml(
+          row.credibility?.note || ""
+        )}）</div>
+            <div class="content-snippet">${snippet}</div>
+            <ul class="sources">${refs}</ul>
+          </div>
+
+          <div class="chip chip-shop">購入リンク（商品候補）</div>
+          <div class="block shop-block">
+            <div class="shop-head">
+              <div>
+                <div class="line">候補商品: <strong>${escapeHtml(row.name)}</strong></div>
+                <div class="line">メインのストア: <strong>${escapeHtml(row.provider)}</strong></div>
+              </div>
+              <img class="preview" src="${escapeHtml(row.imageUrl || "")}" alt="${escapeHtml(
+          row.item
+        )}のイメージ" loading="lazy" />
+            </div>
+            <div class="line" style="margin-top:10px">
+              <a href="${row.productUrl}" data-product-id="${escapeHtml(row.productId)}" data-keyword-key="${escapeHtml(
+          row.keywordKey
+        )}" data-product-name="${escapeHtml(row.name)}" target="_blank" rel="noopener noreferrer"
+                >メインの商品ページを開く</a
+              >
+            </div>
+            <div class="line">
+              代替リンク:
+              <a href="${row.altLinks?.rakuten || "#"}" target="_blank" rel="noopener noreferrer">楽天</a>
+              ／
+              <a href="${row.altLinks?.amazon || "#"}" target="_blank" rel="noopener noreferrer">Amazon</a>
+            </div>
+            <div class="hint" style="margin-top:10px">
+              占いの「勢い」とは別枠です。気に入らなければ代替リンクもご利用ください。
+            </div>
+          </div>
         </article>`;
       }
 
-      async function loadNotify(){
-        try{
+      async function loadNotify() {
+        try {
           const json = await (await fetch("/api/notify-target")).json();
-          if(!json.configured){ notifyBadge.textContent="通知先: 未設定"; return; }
-          const masked = json.topic.length>6 ? `${json.topic.slice(0,2)}***${json.topic.slice(-2)}` : "***";
-          notifyBadge.textContent = `通知先: ${masked}`;
-        }catch{ notifyBadge.textContent="通知先: 確認失敗"; }
+          if (!json.configured) {
+            notifyBadge.textContent = "ntfy: 未設定";
+            return;
+          }
+          const masked =
+            json.topic.length > 6 ? `${json.topic.slice(0, 2)}***${json.topic.slice(-2)}` : "***";
+          notifyBadge.textContent = `ntfy: ${masked}`;
+        } catch {
+          notifyBadge.textContent = "ntfy: 確認失敗";
+        }
+      }
+
+      async function loadLineUi() {
+        try {
+          const json = await (await fetch("/api/line-config")).json();
+          if (!json.enabled) {
+            lineBadge.textContent = "LINE: サーバー未設定";
+            lineHelp.innerHTML =
+              "<strong>運用側の作業:</strong> LINE Developers で Messaging API チャネルを作成し、このサーバーの環境変数に <code>LINE_CHANNEL_SECRET</code> / <code>LINE_CHANNEL_ACCESS_TOKEN</code> / <code>LINE_BOT_BASIC_ID</code>（例: <code>@abc1234</code>）を設定→ Webhook に <code>https://your-domain/line/webhook</code> を登録してください。";
+            return;
+          }
+          lineBadge.textContent = "LINE: 利用可能";
+          const url = json.addFriendUrl || "";
+          lineHelp.innerHTML = url
+            ? `<strong>ステップ:</strong> 友だち追加 → トークで星座（例: 蟹座）→ 時刻（例: <code>07:30</code>）。<div style="margin-top:10px"><a href="${url}" target="_blank" rel="noopener noreferrer">LINEで友だち追加</a></div>`
+            : "<strong>友だち追加URLを出すには:</strong> 環境変数 <code>LINE_BOT_BASIC_ID</code>（Basic ID の <code>@から始まるID</code>）を設定してください。";
+        } catch {
+          lineBadge.textContent = "LINE: 確認失敗";
+          lineHelp.textContent = "LINE設定の取得に失敗しました。ネットワークを確認してください。";
+        }
       }
 
       async function loadSigns() {
         const signs = await (await fetch("/api/signs")).json();
-        signSelect.innerHTML = signs.map((s)=>`<option value="${s}">${s}</option>`).join("");
+        signSelect.innerHTML = signs.map((s) => `<option value="${s}">${s}</option>`).join("");
         const p = loadProfile();
         if (p.birthday) birthdayInput.value = p.birthday;
         const fromBirthday = getSignFromBirthday(p.birthday || "");
@@ -145,9 +539,11 @@
           sourceBadge.textContent = `参照元: ${(json.sourcesUsed || []).join(", ") || "-"}`;
           cards.innerHTML = list.map(cardHtml).join("");
           const cfg = await (await fetch("/api/affiliate-config")).json();
-          storeBadge.textContent = `ストア: ${cfg.preferredStore}`;
-          footer.textContent = `${list.length}件表示 / お気に入り: ${favorite} / Amazonタグ: ${cfg.amazonAssociateEnabled ? "設定済み" : "未設定"} / 楽天アフィ: ${cfg.rakutenAffiliateEnabled ? "設定済み" : "未設定"}`;
-          setStatus("最新データに更新しました。");
+          storeBadge.textContent = `優先ストア: ${cfg.preferredStore}`;
+          footer.textContent = `${list.length}件表示 / お気に入り星座: ${favorite} / アフィ: Amazon ${
+            cfg.amazonAssociateEnabled ? "ON" : "OFF"
+          } / 楽天 ${cfg.rakutenAffiliateEnabled ? "ON" : "OFF"}`;
+          setStatus("最新の占いと商品リンクに更新しました。");
           document.querySelectorAll("a[data-product-id]").forEach((a) => {
             fetch("/api/impression", {
               method: "POST",
@@ -174,14 +570,24 @@
         }
       }
 
-      async function notifyNow(){
-        try{
+      async function notifyNow() {
+        try {
           setStatus("通知送信中...");
-          const json = await (await fetch("/api/notify-now", {method:"POST"})).json();
-          if(!json.ok) throw new Error(json.error || "通知に失敗");
-          setStatus("通知を送信しました。");
-        }catch(e){ setStatus(e.message, true); }
+          const json = await (await fetch("/api/notify-now", { method: "POST" })).json();
+          if (!json.ok) throw new Error(json.error || "通知に失敗");
+          setStatus("ntfy通知を送信しました。");
+        } catch (e) {
+          setStatus(e.message, true);
+        }
       }
+
+      settingsToggle.addEventListener("click", () => {
+        const open = settingsBody.hidden;
+        settingsBody.hidden = !open;
+        settingsToggle.setAttribute("aria-expanded", String(open));
+        const caret = settingsToggle.querySelector('[aria-hidden="true"]');
+        if (caret) caret.textContent = open ? "▲" : "▼";
+      });
 
       document.getElementById("refreshBtn").addEventListener("click", loadData);
       document.getElementById("notifyBtn").addEventListener("click", notifyNow);
@@ -189,7 +595,8 @@
         const birthday = birthdayInput.value;
         const favoriteSign = signSelect.value || getSignFromBirthday(birthday);
         saveProfile({ birthday, favoriteSign });
-        setStatus("お気に入り設定を保存しました。");
+        setStatus("プロフィールを保存しました。このあと自動で一覧を更新します。");
+        loadData();
       });
       birthdayInput.addEventListener("change", () => {
         const sign = getSignFromBirthday(birthdayInput.value);
@@ -199,7 +606,8 @@
       showAll.addEventListener("change", loadData);
 
       loadNotify();
-      loadSigns().then(loadData).catch((e)=>setStatus(e.message,true));
+      loadLineUi();
+      loadSigns().then(loadData).catch((e) => setStatus(e.message, true));
     </script>
   </body>
 </html>
