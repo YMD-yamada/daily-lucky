@@ -10,10 +10,14 @@
     "mug": 1
   },
   "impressionsByProductId": {
-    "mug-nordic-390": 1
+    "mug-nordic-390": 1,
+    "pouch-elegante": 1,
+    "pen-jetstream-41": 2
   },
   "impressionsByKeyword": {
-    "mug": 1
+    "mug": 1,
+    "pouch": 1,
+    "pen": 2
   },
   "dailyOptimization": {
     "2026-04-24": {
@@ -43,7 +47,21 @@
       "keyholder": "keyholder-lasiem",
       "pouch": "pouch-elegante",
       "towel": "towel-daily-10000281"
+    },
+    "2026-10-26": {
+      "note": "note-n295",
+      "mug": "mug-nordic-390",
+      "pen": "pen-jetstream-41",
+      "tote": "tote-rth90029",
+      "watch": "watch-casio-lf30w",
+      "earphone": "earphone-qkz-ak6",
+      "handcream": "handcream-curel",
+      "bookcover": "bookcover-sion",
+      "bottle": "bottle-tiger-mmz",
+      "keyholder": "keyholder-lasiem",
+      "pouch": "pouch-vertical",
+      "towel": "towel-daily-10000281"
     }
   },
-  "updatedAt": "2026-04-25T09:27:28.038Z"
+  "updatedAt": "2026-10-26T14:44:25.608Z"
 }

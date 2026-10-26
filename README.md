@@ -41,7 +41,7 @@
 
 - `PREFERRED_STORE=amazon` のとき、商品リンクは Amazon 検索URL（`AMAZON_ASSOCIATE_TAG` 付き）を優先表示
 - `PREFERRED_STORE=rakuten` のとき、楽天商品ページ（`RAKUTEN_AFF_QUERY`/`RAKUTEN_AFF_WRAPPER_BASE` 付き）を優先表示
-- UIでは楽天/Amazon両方の代替リンクを表示
+- UIでは「楽天で見る／Amazonで見る」の2つのボタンだけを表示（同じお店を2回出さない）
 
 ### 楽天アフィリエイト情報の取り方（この仕様向け）
 
